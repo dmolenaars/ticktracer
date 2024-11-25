@@ -184,8 +184,7 @@ def loading_bar(run, duration) -> None:
         sleep(1)
     print("Exiting...")
 
-
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser("exchange-latency-tester")
         parser.add_argument(
@@ -240,3 +239,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         run.clear()
         pool.shutdown()
+
+if __name__ == "__main__":
+    main()

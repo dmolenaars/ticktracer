@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "latency-scout"
+version = "0.0.3"
+description = "A highly accurate tool to assess the latency of crypto exchange websocket data feeds."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+keywords = ["crypto exchange", "latency", "tester"]
+authors = [
+    { name = "Daniel Molenaars", email = "daniel.molenaars@alibaba-inc.com" },
+]
+dependencies = [
+    "ccxt==4.4.29",
+    "sslkeylog",
+    "numpy",
+    "prettytable",
+    "pyshark",
+    "aiohttp==3.10",
+    "tqdm",
+]
+
+[project.scripts]
+latency-scout = "main:main"
