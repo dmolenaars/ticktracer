@@ -4,25 +4,25 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "latency-scout"
-version = "0.0.3"
-description = "A highly accurate tool to assess the latency of crypto exchange websocket data feeds."
+name = "ticktracer"
+version = "0.0.1"
+description = "An all-in-one tool to assess the latency of crypto exchange APIs."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-keywords = ["crypto exchange", "latency", "tester"]
+keywords = ["crypto", "exchange", "latency", "tester"]
 authors = [
     { name = "Daniel Molenaars", email = "daniel.molenaars@alibaba-inc.com" },
 ]
 dependencies = [
+    "aiohttp==3.10",
     "ccxt==4.4.29",
-    "sslkeylog",
     "numpy",
     "prettytable",
     "pyshark",
-    "aiohttp==3.10",
+    "sslkeylog",
     "tqdm",
 ]
 
 [project.scripts]
-latency-scout = "main:main"
+ticktracer = "main:main"
