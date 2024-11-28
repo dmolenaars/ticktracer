@@ -23,23 +23,40 @@ In addition, the following external dependencies are required:
 
 ## Installation
 ### MacOS
-Install with [Homebrew](https://brew.sh/).
+**Install dependencies**
+
 ```
 brew install wireshark openssl
+```
+**Install ticktracer with pipx (recommended)**
+```
+brew install pipx
+pipx ensurepath
+pipx install ticktracer
+```
+**Install ticktracer with pip**
+
+Install `ticktracer` with pip:
+```
 python3 -m pip install ticktracer
 ```
-### Linux
-Install with `apt`.
+### Linux (Debian)
+**Install dependencies**
 ```
 sudo apt update && sudo apt install -y tshark libssl-dev
-python3 -m pip install ticktracer
 ```
-Optionally, you can install `ticktracer` with [pipx](https://github.com/pypa/pipx) instead of pip to automatically create a Python virtual environment in which it will run:
+**Install ticktracer with pipx (recommended)**
 ```
 sudo apt install pipx
 pipx ensurepath
 pipx install ticktracer
 ```
+**Install ticktracer with pip**
+```
+python3 -m pip install ticktracer
+```
+*Root permissions*
+
 Note that Wireshark requires the user to either have root privileges or to be part of the `wireshark` group in order to trace packets. To enable non-root access to wireshark, run the following command and select `yes`:
 
 `sudo dpkg-reconfigure wireshark-common`
@@ -52,6 +69,13 @@ Create a new session in your terminal, and verify that you are part of the `wire
 
 `groups`
 
+*Automated environments*
+
+For automated environments, like a userdata script, use the following commands to install wireshark:
+```
+export DEBIAN_FRONTEND=noninteractive
+apt update && apt install -y libssl-dev tshark
+```
 
 ## Usage
 ```

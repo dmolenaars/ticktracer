@@ -181,7 +181,7 @@ def loading_bar(run, duration) -> None:
 def main():
     try:
         system = platform.system()
-        parser = argparse.ArgumentParser("exchange-latency-tester")
+        parser = argparse.ArgumentParser("ticktracer")
         parser.add_argument(
             "-e",
             "--exchange_id",
