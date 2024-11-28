@@ -17,15 +17,6 @@ from typing import List
 SSLKEYLOGFILE_FILE = "secrets.log"
 SSLKEYLOGFILE_PATH = os.path.abspath(SSLKEYLOGFILE_FILE)
 
-# def get_ip() -> str:
-#     import socket
-#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#     s.connect(("8.8.8.8", 80))
-#     ip = s.getsockname()[0]
-#     s.close()
-#     return ip
-
-
 def print_report(latency_data) -> None:
     """
     Prints a detailed report of latency data including percentiles and total samples.
@@ -64,6 +55,7 @@ def print_report(latency_data) -> None:
     print(f"Total samples taken: {len(latency_data)}")
     print("Latency report:")
     print(f"\n{matrix_table}")
+    print(np.histogram(latency_data))
 
 
 def get_latency(packet: pyshark.packet.packet.Packet, parser) -> float | None:
