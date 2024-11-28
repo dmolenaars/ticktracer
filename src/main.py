@@ -5,6 +5,7 @@ import concurrent.futures
 import multiprocessing
 import numpy as np
 import os
+import platform
 import pyshark
 import sslkeylog
 import tqdm
@@ -16,6 +17,7 @@ from typing import List
 
 SSLKEYLOGFILE_FILE = "secrets.log"
 SSLKEYLOGFILE_PATH = os.path.abspath(SSLKEYLOGFILE_FILE)
+
 
 def print_report(latency_data) -> None:
     """
@@ -55,7 +57,6 @@ def print_report(latency_data) -> None:
     print(f"Total samples taken: {len(latency_data)}")
     print("Latency report:")
     print(f"\n{matrix_table}")
-    print(np.histogram(latency_data))
 
 
 def get_latency(packet: pyshark.packet.packet.Packet, parser) -> float | None:
@@ -82,7 +83,7 @@ def get_latency(packet: pyshark.packet.packet.Packet, parser) -> float | None:
             pass
 
 
-def capture_packets(duration: int, interface: str, exchange_id: str) -> List[float]:
+def capture_packets(duration: int, exchange_id: str, interface: str) -> List[float]:
     """
     Captures packets from a network interface and extracts latency data.
 
@@ -114,7 +115,7 @@ def capture_packets(duration: int, interface: str, exchange_id: str) -> List[flo
 
 
 def monitor(
-    run: multiprocessing.Event, duration: int, interface: str, exchange_id: str
+    run: multiprocessing.Event, duration: int, exchange_id: str, interface: str
 ) -> List[float]:
     """
     Monitors network traffic and captures latency data.
@@ -126,7 +127,7 @@ def monitor(
     :return: A list of latency values in milliseconds.
     """
     while run.is_set():
-        latency_samples = capture_packets(duration, interface, exchange_id)
+        latency_samples = capture_packets(duration, exchange_id, interface)
         run.clear()
     return latency_samples
 
@@ -176,14 +177,17 @@ def loading_bar(run, duration) -> None:
         sleep(1)
     print("Exiting...")
 
+
 def main():
     try:
+        system = platform.system()
         parser = argparse.ArgumentParser("exchange-latency-tester")
         parser.add_argument(
-            "-d",
-            "--duration",
-            help="Duration in seconds to monitor.",
-            type=int,
+            "-e",
+            "--exchange_id",
+            help="The exchange to connect with.",
+            type=str,
+            choices=["okx", "binance", "bybit"],
             required=True,
         )
         parser.add_argument(
@@ -194,18 +198,18 @@ def main():
             required=True,
         )
         parser.add_argument(
-            "-i",
-            "--interface",
-            help="The network interface to listen on.",
-            default="eth0",
-            type=str,
+            "-d",
+            "--duration",
+            help="Duration in seconds to monitor.",
+            type=int,
+            required=True,
         )
         parser.add_argument(
-            "-e",
-            "--exchange_id",
-            help="The exchange to connect with.",
+            "-i",
+            "--interface",
+            help="The network interface to listen on. Default is eth0 for Linux or en0 for macOS.",
+            default=("eth0" if system == "Linux" else "en0"),
             type=str,
-            choices=["okx", "binance", "bybit"],
         )
         args = parser.parse_args()
 
@@ -220,7 +224,11 @@ def main():
         # Initialize process pool.
         pool = concurrent.futures.ThreadPoolExecutor()
         monitor_process = pool.submit(
-            monitor, run, args.duration, args.interface, args.exchange_id
+            monitor,
+            run,
+            args.duration,
+            args.exchange_id,
+            args.interface,
         )
         feed_process = pool.submit(feed, run, args.pair, args.exchange_id)
         load_process = pool.submit(loading_bar, run, args.duration)
@@ -231,6 +239,7 @@ def main():
     except KeyboardInterrupt:
         run.clear()
         pool.shutdown()
+
 
 if __name__ == "__main__":
     main()
